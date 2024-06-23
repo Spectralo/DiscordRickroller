@@ -1,8 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
 const { createAudioPlayer } = require('@discordjs/voice');
-const { createAudioResource } = require('@discordjs/voice');
-const { AudioPlayerStatus } = require('@discordjs/voice');
+const { createAudioResource , StreamType} = require('@discordjs/voice');
+const { createReadStream } = require('node:fs');
+const { join } = require('node:path');
+
 
 
 const { VoiceConnectionStatus } = require('@discordjs/voice');
@@ -23,6 +25,8 @@ module.exports = {
         .setDescription('The channel rickroll')
     .setRequired(true)),
 
+
+
   // Execute the command
   async execute(interaction) {
       const channel = interaction.options.getChannel('channel');
@@ -36,18 +40,19 @@ module.exports = {
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator,
       });
+      let resource 
 
-      connection.on(VoiceConnectionStatus.Ready, () => {
+      await connection.on(VoiceConnectionStatus.Ready, () => {
         console.log('The connection has entered the Ready state - ready to play audio!');
+        let resource = createAudioResource('https://cdn.discordapp.com/attachments/1254131047013023815/1254509341277687840/Rickroll.mp3');
+        connection.subscribe(player);
+        player.play(resource);
 
       });
-      const resource = createAudioResource('https://www.myinstants.com/media/sounds/never-gonna-give-you-up-rickroll.mp3');
-      player.play(resource);
-      console.log(resource)
-      connection.subscribe(player);
-      player.on(AudioPlayerStatus.Idle, () => {
-        connection.destroy();
-      });
+
+
+
+
 
   },
 };
