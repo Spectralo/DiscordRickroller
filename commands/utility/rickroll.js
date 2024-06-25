@@ -40,15 +40,16 @@ module.exports = {
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator,
       });
-      let resource 
-
-      await connection.on(VoiceConnectionStatus.Ready, () => {
+      connection.on(VoiceConnectionStatus.Ready, () => {
         console.log('The connection has entered the Ready state - ready to play audio!');
         let resource = createAudioResource('https://cdn.discordapp.com/attachments/1254131047013023815/1254509341277687840/Rickroll.mp3');
         connection.subscribe(player);
         player.play(resource);
 
       });
+      setTimeout(() => {
+        connection.destroy();
+      }, 10000);
 
 
 
